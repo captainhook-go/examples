@@ -1,2 +1,2 @@
 # examples
-Repository with lot of example branches to demo the CaptainHook functionality
+Repository with lots of example branches to demo the CaptainHook functionality

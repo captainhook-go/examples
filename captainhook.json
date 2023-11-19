@@ -1,0 +1,118 @@
+{
+    "config": {
+        "verbosity": "normal",
+        "fail-on-first-error": false,
+        "ansi-colors": true,
+        "git-directory": ".git",
+        "includes": [],
+        "run-async": false,
+        "custom": {
+            "this-is-truthy": "yes",
+            "this-is-falsy": "false"
+        }
+    },
+    "hooks": {
+        "commit-msg": {
+            "actions": [
+                {
+                    "run": "CaptainHook::Message.MustFollowBeamsRules",
+                    "options": {
+                        "subject-length": 50,
+                        "body-line-length": 72
+                    }
+                },
+                {
+                    "run": "CaptainHook::Message.MustContainsRegex",
+                    "options": {
+                        "regex": ".*"
+                    }
+                },
+                {
+                    "run": "echo arg-value+{$MESSAGE_FILE}+{$ARG|value-of:MESSAGE_FILE}+{$ARG|value-of:message-file}+"
+                }
+            ]
+        },
+        "pre-push": {
+            "actions": [
+                {
+                    "run": "CaptainHook::Branch.PreventPushOfFixupAndSquashCommits"
+                }
+            ]
+        },
+        "pre-commit": {
+            "actions": [
+                {
+                    "run": "echo foo",
+                    "conditions": [
+                        {
+                            "run": "CaptainHook::InConfig.CustomValueIsTruthy",
+                            "options": {
+                                "value": "this-is-truthy"
+                            }
+                        },
+                        {
+                            "run": "CaptainHook::InConfig.CustomValueIsFalsy",
+                            "options": {
+                                "value": "this-is-falsy"
+                            }
+                        }
+                    ]
+                },
+                {
+                    "run": "CaptainHook::File.DoesNotContainRegex",
+                    "options": {
+                        "regex": "fooooooo"
+                    }
+                },
+                {
+                    "run": "CaptainHook::File.MaxSize",
+                    "config": {
+                        "label": "Max Size 2MB"
+                    },
+                    "options": {
+                        "max-size": "2M"
+                    }
+                },
+                {
+                    "run": "echo {$STAGED_FILES|of-type:go|separated-by:,|in-directory:exec}",
+                    "conditions": [
+                        {
+                            "run": "CaptainHook::FileStaged.ThatIs",
+                            "options": {
+                                "of-type": "go",
+                                "in-directory": "exec"
+                            }
+                        }
+                    ]
+                }
+            ]
+        },
+        "prepare-commit-msg": {
+            "actions": [
+                {
+                    "run": "CaptainHook::Message.InjectIssueKeyFromBranch",
+                    "options": {
+                        "regex": "([A-Za-z]+\\-[0-9]+)"
+                    }
+                },
+                {
+                    "run": "CaptainHook::Message.PrepareFromFile",
+                    "options": {
+                        "file": "foo.txt"
+                    }
+                }
+
+            ]
+        },
+        "post-change": {
+            "actions": [
+                {
+                    "run": "CaptainHook::Debug.Success"
+                },
+                {
+                    "run": "CaptainHook::Notify.GitNotify"
+                }
+            ]
+        }
+    }
+}
