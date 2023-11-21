@@ -4,7 +4,7 @@ Repository with lots of example branches to demo the CaptainHook functionality. 
 Captain.
 
 ```
-$ git clone git@github.com:captainhook-go/examples.git && cd examples
+$ git clone git@github.com:captainhook-go/examples.git & cd examples
 $ captainhook install -f
 ```
 
